@@ -6,6 +6,7 @@ from sklearn.metrics import classification_report
 from sklearn.metrics import confusion_matrix
 
 import streamlit as st
+
 # streamlit run final.py
 
 s = pd.read_csv("social_media_usage.csv")
@@ -44,14 +45,12 @@ lr.fit(X_train, y_train)
 
 
 ###### Streamlit code
-
 st.markdown("# LinkedIn User Prediction")
 
 st.markdown("### Fill out the following information about yourself, \
 	and our algorithm will predict if you are a LinkedIn user")
 
 # income
-
 income_dict = {
 	"< 10k":1,
 	"10k - 20k":2,
@@ -67,7 +66,6 @@ income_dict = {
 income = st.selectbox(label="Income", options=(list(income_dict.keys())))
 
 # education
-
 education_dict = {
 	"Less than high school":1,
 	"High school incomplete":2,
@@ -82,7 +80,6 @@ education_dict = {
 education = st.selectbox(label="Education", options=(list(education_dict.keys())))
 
 # parent
-
 parent = False
 if st.checkbox("Are you a parent?"):
     parent = True
@@ -90,7 +87,6 @@ else:
 	parent = False
 
 # married
-
 married = False
 if st.checkbox("Are you married?"):
     married = True
@@ -98,7 +94,6 @@ else:
 	married = False
 
 # female
-
 female = False
 if st.checkbox("Are you female?"):
     female = True
@@ -106,7 +101,6 @@ else:
 	female = False
 
 # age
-
 age = st.slider("Age", min_value = 1, max_value = 97)
 
 
@@ -117,11 +111,19 @@ if st.button("Predict!"):
 
 	# Predict class, given input features
 	predicted_class = lr.predict([person])
-	st.write("We predict that you are", "" if predicted_class == 1 else "not", "a LinkedIn user")
+	not_str = "" if predicted_class == 1 else "not"
+	pred_str = f"We predict that you are {not_str} a LinkedIn user. "
 
 	# Generate probability of positive class (=1)
-	probs = lr.predict_proba([person])
-	st.write(f"Probability that you are a LinkedIn user: {round(probs[0][1] * 100, 2)}%")
+	prob = lr.predict_proba([person])[0][1]
+	pred_str += f"The probability that you are a LinkedIn user is {round(prob * 100, 2)}%"
+
+	if predicted_class:
+		st.success(pred_str, icon="✅")
+	else:
+		st.error(pred_str, icon="❌")
+
+
 
 
 
