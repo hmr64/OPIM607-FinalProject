@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import altair as alt
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
@@ -111,19 +112,32 @@ if st.button("Predict!"):
 
 	# Predict class, given input features
 	predicted_class = lr.predict([person])
-	not_str = "" if predicted_class == 1 else "not"
-	pred_str = f"We predict that you are {not_str} a LinkedIn user. "
 
 	# Generate probability of positive class (=1)
 	prob = lr.predict_proba([person])[0][1]
+
+	# Donut plot
+	source = pd.DataFrame({"category": ["LinkedIn User", ""], "value": [prob, 1-prob]})
+	color = "green" if prob > 0.5 else "red"
+	domain = ["LinkedIn User", ""]
+	range = [color, 'lightgray']
+
+	vis = alt.Chart(source, width=100, height=100).mark_arc(innerRadius=20).encode(
+	    theta=alt.Theta(field="value", type="quantitative"),
+	    color=alt.Color(field="category", type="nominal", scale=alt.Scale(domain=domain, range=range), legend=None),
+	)
+
+	st.altair_chart(vis, use_container_width=True)
+
+	# Text
+	not_str = "" if predicted_class == 1 else "not"
+	pred_str = f"We predict that you are {not_str} a LinkedIn user. "
 	pred_str += f"The probability that you are a LinkedIn user is {round(prob * 100, 2)}%"
 
 	if predicted_class:
 		st.success(pred_str, icon="✅")
 	else:
 		st.error(pred_str, icon="❌")
-
-
 
 
 
