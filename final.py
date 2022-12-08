@@ -46,7 +46,13 @@ lr.fit(X_train, y_train)
 
 
 ###### Streamlit code
-st.markdown("# LinkedIn User Prediction")
+
+# Title
+col1, mid, col2 = st.columns([1,1,20])
+with col1:
+    st.image("LinkedIn.png", width=60)
+with col2:
+	st.markdown("# LinkedIn User Prediction") 
 
 st.markdown("### Fill out the following information about yourself, \
 	and our algorithm will predict if you are a LinkedIn user")
@@ -81,25 +87,13 @@ education_dict = {
 education = st.selectbox(label="Education", options=(list(education_dict.keys())))
 
 # parent
-parent = False
-if st.checkbox("Are you a parent?"):
-    parent = True
-else:
-	parent = False
+parent = st.checkbox("Are you a parent?")
 
 # married
-married = False
-if st.checkbox("Are you married?"):
-    married = True
-else:
-	married = False
+married = st.checkbox("Are you married?")
 
 # female
-female = False
-if st.checkbox("Are you female?"):
-    female = True
-else:
-	female = False
+female = st.checkbox("Are you female?")
 
 # age
 age = st.slider("Age", min_value = 1, max_value = 97)
@@ -127,17 +121,20 @@ if st.button("Predict!"):
 	    color=alt.Color(field="category", type="nominal", scale=alt.Scale(domain=domain, range=range), legend=None),
 	)
 
-	st.altair_chart(vis, use_container_width=True)
-
 	# Text
 	not_str = "" if predicted_class == 1 else "not"
 	pred_str = f"We predict that you are {not_str} a LinkedIn user. "
 	pred_str += f"The probability that you are a LinkedIn user is {round(prob * 100, 2)}%"
 
-	if predicted_class:
-		st.success(pred_str, icon="✅")
-	else:
-		st.error(pred_str, icon="❌")
+	# Display
+	col1, mid, col2 = st.columns([80,1,20])
+	with col1:
+		if predicted_class:
+			st.success(pred_str, icon="✅")
+		else:
+			st.error(pred_str, icon="❌")
+	with col2:
+		st.altair_chart(vis, use_container_width=True)
 
 
 
